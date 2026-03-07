@@ -161,12 +161,12 @@ const AdminDashboard = () => {
           {showForm && (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-foreground/30 backdrop-blur-sm z-30 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-foreground/30 backdrop-blur-sm z-30 flex items-start sm:items-center justify-center p-4 pt-24 sm:pt-4 overflow-y-auto"
               onClick={(e) => { if (e.target === e.currentTarget) resetForm(); }}
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                className="glass rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+                className="glass rounded-2xl p-6 w-full max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto mt-4 sm:mt-0"
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold">{editingId ? 'Edit' : 'Create'} Wish</h2>
