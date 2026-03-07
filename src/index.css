@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@layer base {
+  :root {
+    --background: 330 30% 97%;
+    --foreground: 280 20% 20%;
+
+    --card: 330 40% 98%;
+    --card-foreground: 280 20% 20%;
+
+    --popover: 330 40% 98%;
+    --popover-foreground: 280 20% 20%;
+
+    --primary: 330 60% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 40% 85%;
+    --secondary-foreground: 280 20% 20%;
+
+    --muted: 330 20% 92%;
+    --muted-foreground: 280 10% 45%;
+
+    --accent: 270 50% 80%;
+    --accent-foreground: 280 20% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 330 30% 88%;
+    --input: 330 30% 88%;
+    --ring: 330 60% 65%;
+
+    --radius: 0.75rem;
+
+    --rose: 340 70% 70%;
+    --lavender: 270 50% 75%;
+    --peach: 20 80% 80%;
+    --gold: 45 80% 60%;
+    --mint: 160 40% 75%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(330 60% 65%), hsl(270 50% 75%));
+    --gradient-warm: linear-gradient(135deg, hsl(340 70% 70%), hsl(20 80% 80%));
+    --gradient-soft: linear-gradient(135deg, hsl(330 30% 97%), hsl(270 30% 95%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 80% 60%), hsl(30 70% 65%));
+
+    --shadow-glow: 0 0 30px hsl(330 60% 65% / 0.3);
+    --shadow-soft: 0 10px 40px hsl(280 20% 20% / 0.08);
+    --shadow-card: 0 4px 20px hsl(330 60% 65% / 0.15);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-body {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-warm {
+    background: var(--gradient-warm);
+  }
+
+  .gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: hsl(330 40% 98% / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(330 30% 88% / 0.5);
+  }
+}
+
+/* Floating petals animation */
+@keyframes float-petal {
+  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+  50% { transform: translateY(-30vh) rotate(180deg) translateX(30px); opacity: 0.8; }
+  100% { transform: translateY(-60vh) rotate(360deg) translateX(-20px); opacity: 0; }
+}
+
+@keyframes fall-petal {
+  0% { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(100vh) rotate(720deg) translateX(100px); opacity: 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px hsl(330 60% 65% / 0.3); }
+  50% { box-shadow: 0 0 40px hsl(330 60% 65% / 0.6); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin-wheel {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(var(--spin-degrees, 1800deg)); }
+}
+
+@keyframes typewriter-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-float-petal {
+  animation: float-petal 6s ease-in-out infinite;
+}
+
+.animate-fall-petal {
+  animation: fall-petal var(--fall-duration, 8s) linear var(--fall-delay, 0s) infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-spin-wheel {
+  animation: spin-wheel 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+}
+
+.cursor-blink::after {
+  content: '|';
+  animation: typewriter-cursor 0.7s step-end infinite;
+}
+
+/* Music visualizer bars */
+@keyframes music-bar {
+  0%, 100% { height: 4px; }
+  50% { height: var(--bar-height, 20px); }
+}
+
+.music-bar {
+  animation: music-bar var(--bar-speed, 0.5s) ease-in-out infinite;
+}
