@@ -73,13 +73,6 @@ const ScratchCard = ({
       checkReveal()
     }
 
-    const move = (e: MouseEvent | TouchEvent) => {
-
-      if (!isDrawing.current) return
-
-      const pos = getCursor(e)
-      scratch(pos.x, pos.y)
-    }
 
     const checkReveal = () => {
 
@@ -100,6 +93,18 @@ const ScratchCard = ({
       }
     }
 
+    const move = (e: MouseEvent | TouchEvent) => {
+
+      if (!isDrawing.current) return
+
+      if ("touches" in e) {
+        e.preventDefault()
+      }
+
+      const pos = getCursor(e)
+      scratch(pos.x, pos.y)
+    }
+
     canvas.addEventListener("mousedown", start)
     canvas.addEventListener("touchstart", start)
 
@@ -107,7 +112,7 @@ const ScratchCard = ({
     canvas.addEventListener("touchend", end)
 
     canvas.addEventListener("mousemove", move)
-    canvas.addEventListener("touchmove", move)
+    canvas.addEventListener("touchmove", move, { passive: false })
 
     return () => {
       canvas.removeEventListener("mousedown", start)
@@ -118,7 +123,7 @@ const ScratchCard = ({
       canvas.removeEventListener("touchmove", move)
     }
 
-  }, [onReveal])
+    }, [onReveal])
 
   return (
     <div className="relative w-48 h-36 sm:w-64 sm:h-44 rounded-2xl overflow-hidden shadow-2xl border border-white/20">
@@ -187,6 +192,17 @@ const HiddenAppreciation = ({ wish }: Props) => {
     setRevealedImage(null)
   }
 
+  const closeModal = () => {
+    setOpen(false)
+
+    setTimeout(() => {
+      setShowEnvelope(true)
+      setCurrentIndex(0)
+      setGallery([])
+      setRevealedImage(null)
+    }, 300)
+  }
+
   return (
 
     <section className="py-24 px-6 text-center relative overflow-hidden">
@@ -238,22 +254,26 @@ const HiddenAppreciation = ({ wish }: Props) => {
       {/* Popup */}
 
       <AnimatePresence>
-
         {open && (
-
           <motion.div
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            exit={{opacity:0}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4"
           >
-
             <motion.div
-              initial={{scale:0.9}}
-              animate={{scale:1}}
-              exit={{scale:0.9}}
-              className="bg-white/80 dark:bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white/80 dark:bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl"
             >
+              <div
+                onClick={closeModal}
+                className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-lg font-semibold cursor-pointer"
+              >
+                ✕
+              </div>
 
               <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
                 Hidden Appreciations 💌
@@ -263,61 +283,74 @@ const HiddenAppreciation = ({ wish }: Props) => {
                 Scratch to reveal the appreciation messages waiting for you.
               </p>
 
-              {images.length > 0 && (
-                <p className="text-xs text-muted-foreground mb-4">
-                  Card {Math.min(currentIndex + 1, images.length)} of {images.length}
-                </p>
-              )}
 
               {/* Scratch Area */}
 
-              <div className="flex justify-center min-h-[220px]">
+              {images.length === 0 ? (
 
-                <AnimatePresence mode="wait">
+                <div className="text-center py-12">
 
-                  {currentIndex < images.length && (
+                  <p className="text-xl font-semibold">
+                    No hidden appreciations yet 💌
+                  </p>
+
+                  <p className="text-sm text-muted-foreground mt-2">
+                    This section was meant to reveal appreciation cards,
+                    but none were added.
+                  </p>
+
+                </div>
+
+              ) : (
+
+                <div className="flex justify-center min-h-[220px]">
+
+                  <AnimatePresence mode="wait">
+
+                    {currentIndex < images.length && (
+
+                      <motion.div
+                        key={currentIndex}
+                        initial={{x:300,opacity:0}}
+                        animate={{x:0,opacity:1}}
+                        exit={{x:-300,opacity:0}}
+                        transition={{duration:0.6}}
+                      >
+
+                        <ScratchCard
+                          image={images[currentIndex]}
+                          onReveal={() => reveal(images[currentIndex])}
+                        />
+
+                      </motion.div>
+
+                    )}
+
+                  </AnimatePresence>
+
+                  {currentIndex === images.length && (
 
                     <motion.div
-                      key={currentIndex}
-                      initial={{x:300,opacity:0}}
-                      animate={{x:0,opacity:1}}
-                      exit={{x:-300,opacity:0}}
-                      transition={{duration:0.6}}
+                      initial={{opacity:0}}
+                      animate={{opacity:1}}
+                      className="text-center"
                     >
 
-                      <ScratchCard
-                        image={images[currentIndex]}
-                        onReveal={() => reveal(images[currentIndex])}
-                      />
+                      <p className="text-xl font-semibold">
+                        All appreciations revealed 💖
+                      </p>
+
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Hope this made your day a little brighter.
+                      </p>
 
                     </motion.div>
 
                   )}
 
-                </AnimatePresence>
+                </div>
 
-                {currentIndex === images.length && (
-
-                  <motion.div
-                    initial={{opacity:0}}
-                    animate={{opacity:1}}
-                    className="text-center"
-                  >
-
-                    <p className="text-xl font-semibold">
-                      All appreciations revealed 💖
-                    </p>
-
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Hope this made your day a little brighter.
-                    </p>
-
-                  </motion.div>
-
-                )}
-
-              </div>
-
+              )}
               {/* Gallery */}
 
               {gallery.length > 0 && (
@@ -334,7 +367,7 @@ const HiddenAppreciation = ({ wish }: Props) => {
                       whileHover={{ scale: 1.1 }}
                       transition={{type:"spring"}}
                       onClick={() => setRevealedImage(img)}
-                      className="w-24 h-18 object-cover rounded-xl shadow-lg cursor-pointer border border-white/20"
+                      className="w-24 h-20 object-cover rounded-xl shadow-lg cursor-pointer border border-white/20"
                     />
 
                   ))}
@@ -343,25 +376,13 @@ const HiddenAppreciation = ({ wish }: Props) => {
 
               )}
 
-              <button
-                onClick={() => {
-                  setOpen(false)
-                  setShowEnvelope(true)
-                }}
-                className="mt-8 px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium shadow-lg hover:opacity-90"
-              >
-                Close
-              </button>
 
             </motion.div>
-
           </motion.div>
-
         )}
-
       </AnimatePresence>
 
-      {/* Fullscreen Viewer */}
+      {/* Mobile Fullscreen Viewer */}
 
       <AnimatePresence>
 
@@ -371,51 +392,29 @@ const HiddenAppreciation = ({ wish }: Props) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60]"
-            onClick={closeReveal}
+            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+            onClick={() => setRevealedImage(null)}
           >
 
-            <motion.div
-              className="absolute top-6 right-6 text-white text-3xl cursor-pointer"
-              onClick={closeReveal}
-            >
-              ✕
-            </motion.div>
-
-            <motion.div
-              initial={{ scale: 0.8 }}
+            <motion.img
+              src={revealedImage}
+              initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="w-full h-full flex items-center justify-center p-4"
+              exit={{ scale: 0.9 }}
+              transition={{ duration: 0.25 }}
+              className="max-h-[95vh] max-w-[95vw] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
-            >
+            />
 
-              <TransformWrapper
-                initialScale={1}
-                minScale={1}
-                maxScale={5}
-                doubleClick={{ mode: "zoomIn" }}
-              >
-
-                <TransformComponent>
-
-                  <img
-                    src={revealedImage}
-                    className="max-h-[85vh] max-w-[92vw] object-contain rounded-xl shadow-2xl"
-                  />
-
-                </TransformComponent>
-
-              </TransformWrapper>
-
-            </motion.div>
+            <div className="absolute top-5 right-5 text-white text-3xl">
+              ✕
+            </div>
 
           </motion.div>
 
         )}
 
-      </AnimatePresence>
-
+      </AnimatePresence>        
     </section>
 
   )

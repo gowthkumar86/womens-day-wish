@@ -50,27 +50,34 @@ export const getWishes = async (): Promise<WishData[]> => {
   return data || [];
 };
 
-export const getWishById = async (id: string): Promise<WishData | null> => {
+export const getWishById = async (id: string) => {
 
   const { data, error } = await supabase
     .from("wishes")
     .select("*")
     .eq("id", id)
-    .single();
+    .single()
 
-  if (error) {
-    console.error(error);
-    return null;
+  if (error) throw error
+
+  return {
+    id: data.id,
+    name: data.name,
+    nickname: data.nickname,
+    photo: data.photo,
+    message: data.message,
+    complimentStyle: data.compliment_style,
+    relationship: data.relationship,
+    appreciationImages: data.appreciation_images || [],
+    createdAt: data.created_at
   }
-
-  return data;
-};
+}
 
 export const saveWish = async (wish: WishData) => {
 
   const { data, error } = await supabase
     .from("wishes")
-    .insert([
+    .upsert(
       {
         id: wish.id,
         name: wish.name,
@@ -82,15 +89,16 @@ export const saveWish = async (wish: WishData) => {
         appreciation_images: wish.appreciationImages || [],
         created_at: new Date().toISOString(),
       },
-    ]);
+      { onConflict: "id" } // tells Supabase to update if id exists
+    )
 
   if (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 
-  return data;
-};
+  return data
+}
 
 export const deleteWish = async (id: string) => {
 
@@ -104,6 +112,14 @@ export const deleteWish = async (id: string) => {
     throw error;
   }
 };
+
+export const getImageUrl = (path: string) => {
+  const { data } = supabase.storage
+    .from("wishes")
+    .getPublicUrl(path)
+
+  return data.publicUrl
+}
 
 /* ---------------- ID GENERATOR ---------------- */
 
