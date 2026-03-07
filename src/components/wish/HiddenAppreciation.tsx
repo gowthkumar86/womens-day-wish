@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import confetti from "canvas-confetti"
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import { type WishData } from "@/lib/wishStore"
+import { createPortal } from "react-dom"
 
 interface Props {
   wish: WishData
@@ -252,169 +252,167 @@ const HiddenAppreciation = ({ wish }: Props) => {
       )}
 
       {/* Popup */}
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4"
-          >
+      {createPortal(
+        <>
+        <AnimatePresence>
+          {open && (
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative bg-white/80 dark:bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999] p-4"
             >
-              <div
-                onClick={closeModal}
-                className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-lg font-semibold cursor-pointer"
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative bg-white/80 dark:bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-3xl w-full max-h-[95vh] overflow-y-auto shadow-2xl"
               >
-                ✕
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
-                Hidden Appreciations 💌
-              </h2>
-
-              <p className="text-sm text-muted-foreground mb-6">
-                Scratch to reveal the appreciation messages waiting for you.
-              </p>
-
-
-              {/* Scratch Area */}
-
-              {images.length === 0 ? (
-
-                <div className="text-center py-12">
-
-                  <p className="text-xl font-semibold">
-                    No hidden appreciations yet 💌
-                  </p>
-
-                  <p className="text-sm text-muted-foreground mt-2">
-                    This section was meant to reveal appreciation cards,
-                    but none were added.
-                  </p>
-
+                <div
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-lg font-semibold cursor-pointer"
+                >
+                  ✕
                 </div>
 
-              ) : (
+                <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+                  Hidden Appreciations 💌
+                </h2>
 
-                <div className="flex justify-center min-h-[220px]">
+                <p className="text-sm text-muted-foreground mb-6">
+                  Scratch to reveal the appreciation messages waiting for you.
+                </p>
 
-                  <AnimatePresence mode="wait">
 
-                    {currentIndex < images.length && (
+                {/* Scratch Area */}
+
+                {images.length === 0 ? (
+
+                  <div className="text-center py-12">
+
+                    <p className="text-xl font-semibold">
+                      No hidden appreciations yet 💌
+                    </p>
+
+                    <p className="text-sm text-muted-foreground mt-2">
+                      This section was meant to reveal appreciation cards,
+                      but none were added.
+                    </p>
+
+                  </div>
+
+                ) : (
+
+                  <div className="flex justify-center min-h-[220px]">
+
+                    <AnimatePresence mode="wait">
+
+                      {currentIndex < images.length && (
+
+                        <motion.div
+                          key={currentIndex}
+                          initial={{x:300,opacity:0}}
+                          animate={{x:0,opacity:1}}
+                          exit={{x:-300,opacity:0}}
+                          transition={{duration:0.6}}
+                        >
+
+                          <ScratchCard
+                            image={images[currentIndex]}
+                            onReveal={() => reveal(images[currentIndex])}
+                          />
+
+                        </motion.div>
+
+                      )}
+
+                    </AnimatePresence>
+
+                    {currentIndex === images.length && (
 
                       <motion.div
-                        key={currentIndex}
-                        initial={{x:300,opacity:0}}
-                        animate={{x:0,opacity:1}}
-                        exit={{x:-300,opacity:0}}
-                        transition={{duration:0.6}}
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        className="text-center"
                       >
-
-                        <ScratchCard
-                          image={images[currentIndex]}
-                          onReveal={() => reveal(images[currentIndex])}
-                        />
+                        <p className="text-xl font-semibold">
+                          Hope this made your day a little brighter.
+                        </p>
 
                       </motion.div>
 
                     )}
 
-                  </AnimatePresence>
+                  </div>
 
-                  {currentIndex === images.length && (
+                )}
+                {/* Gallery */}
 
-                    <motion.div
-                      initial={{opacity:0}}
-                      animate={{opacity:1}}
-                      className="text-center"
-                    >
+                {gallery.length > 0 && (
 
-                      <p className="text-xl font-semibold">
-                        All appreciations revealed 💖
-                      </p>
+                  <div className="mt-8 flex gap-3 overflow-x-auto justify-center">
 
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Hope this made your day a little brighter.
-                      </p>
+                    {gallery.map((img,i) => (
 
-                    </motion.div>
+                      <motion.img
+                        key={i}
+                        src={img}
+                        initial={{scale:0}}
+                        animate={{scale:1}}
+                        whileHover={{ scale: 1.1 }}
+                        transition={{type:"spring"}}
+                        onClick={() => setRevealedImage(img)}
+                        className="w-24 h-20 object-cover rounded-xl shadow-lg cursor-pointer border border-white/20"
+                      />
 
-                  )}
+                    ))}
 
-                </div>
+                  </div>
 
-              )}
-              {/* Gallery */}
+                )}
 
-              {gallery.length > 0 && (
 
-                <div className="mt-8 flex gap-3 overflow-x-auto justify-center">
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                  {gallery.map((img,i) => (
+        {/* Mobile Fullscreen Viewer */}
 
-                    <motion.img
-                      key={i}
-                      src={img}
-                      initial={{scale:0}}
-                      animate={{scale:1}}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{type:"spring"}}
-                      onClick={() => setRevealedImage(img)}
-                      className="w-24 h-20 object-cover rounded-xl shadow-lg cursor-pointer border border-white/20"
-                    />
+        <AnimatePresence>
 
-                  ))}
+          {revealedImage && (
 
-                </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
+              onClick={() => setRevealedImage(null)}
+            >
 
-              )}
+              <motion.img
+                src={revealedImage}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                transition={{ duration: 0.25 }}
+                className="max-h-[95vh] max-w-[95vw] object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
 
+              <div className="absolute top-5 right-5 text-white text-3xl">
+                ✕
+              </div>
 
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Mobile Fullscreen Viewer */}
-
-      <AnimatePresence>
-
-        {revealedImage && (
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
-            onClick={() => setRevealedImage(null)}
-          >
-
-            <motion.img
-              src={revealedImage}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              transition={{ duration: 0.25 }}
-              className="max-h-[95vh] max-w-[95vw] object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            <div className="absolute top-5 right-5 text-white text-3xl">
-              ✕
-            </div>
-
-          </motion.div>
-
-        )}
-
-      </AnimatePresence>        
+          )}
+        </AnimatePresence> ,
+        </>,
+          document.body
+        )}      
     </section>
 
   )
