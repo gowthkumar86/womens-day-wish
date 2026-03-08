@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Star } from "lucide-react"
 import confetti from "canvas-confetti"
@@ -240,31 +240,31 @@ return {
 const ReflectOnSender = ({ senderName, relationship }: Props) => {
 
 
-const questions = [...QUESTION_BANK[relationship]]
-  .sort(() => Math.random() - 0.5)
-  .map(q => q.replace("{name}", senderName))
+const questions = useMemo(() => {
+  return [...QUESTION_BANK[relationship]]
+    .sort(() => Math.random() - 0.5)
+    .map(q => q.replace("{name}", senderName))
+}, [relationship, senderName])
 
 const [started,setStarted] = useState(false)
 const [index,setIndex] = useState(0)
 const [ratings,setRatings] = useState<number[]>([])
 const [finished,setFinished] = useState(false)
+const [hovered, setHovered] = useState<number | null>(null)
 
-const handleRate = (star:number)=>{
+const handleRate = (star: number) => {
 
-const newRatings = [...ratings]
-newRatings[index] = star
-setRatings(newRatings)
+  setRatings(prev => {
+    const updated = [...prev]
+    updated[index] = star
+    return updated
+  })
 
-setTimeout(()=>{
-
-if(index < questions.length-1)
-setIndex(prev=>prev+1)
-
-else
-setFinished(true)
-
-},400)
-
+  if (index < questions.length - 1) {
+    setIndex(prev => prev + 1)
+  } else {
+    setFinished(true)
+  }
 }
 
 const score = ratings.reduce((sum, r) => {
@@ -343,7 +343,7 @@ Start Game ✨
 {started && !finished && (
 
 <motion.div
-key={index}
+key={questions[index]}
 initial={{opacity:0,y:30}}
 animate={{opacity:1,y:0}}
 className="glass rounded-2xl p-6 shadow-card"
@@ -366,28 +366,39 @@ Question {index + 1} / {questions.length}
 {questions[index]}
 </h3>
 
-<div className="flex justify-center gap-3">
+<div className="flex justify-center gap-4">
 
-{[1,2,3,4,5].map(star => (
+{[1,2,3,4,5].map(star => {
 
-<motion.div
+const active = hovered !== null
+  ? star <= hovered
+  : star <= (ratings[index] ?? 0)
+
+return (
+
+<motion.button
 key={star}
 whileHover={{ scale: 1.2 }}
 whileTap={{ scale: 0.9 }}
+onMouseEnter={() => setHovered(star)}
+onMouseLeave={() => setHovered(null)}
+onClick={() => handleRate(star)}
+className="transition"
 >
 
 <Star
-onClick={() => handleRate(star)}
-className={`w-10 h-10 cursor-pointer transition-all ${
-ratings[index] >= star
-? "text-yellow-400 fill-yellow-400 drop-shadow"
-: "text-gray-300 hover:text-yellow-300"
+className={`w-10 h-10 transition-all duration-200 ${
+active
+? "text-yellow-400 fill-yellow-400 drop-shadow-lg"
+: "text-gray-300"
 }`}
 />
 
-</motion.div>
+</motion.button>
 
-))}
+)
+
+})}
 
 </div>
 
