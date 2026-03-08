@@ -276,12 +276,15 @@ const result = getResult(score, senderName, relationship)
 
 const share = () => {
 
-const text = `I just played the "Rate ${senderName} Challenge" 😄
+const text = `I just played the *Reflect on ${senderName}* game ✨
 
-My score: ${score}/50 ⭐
+My result:
+⭐ ${score}/50
 
 Apparently ${senderName} is:
-${result.title}
+*${result.title}*
+
+It was actually a thoughtful little experience.
 `
 
 window.open(`https://wa.me/?text=${encodeURIComponent(text)}`)
@@ -299,9 +302,14 @@ origin: { y: 0.6 }
 
 return(
 
-<section className="flex justify-center px-6 py-12 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
+<section className="py-20 px-4">
 
-<div className="w-full max-w-xl bg-white/70 backdrop-blur-xl shadow-xl rounded-3xl p-10 border border-white/50">
+<motion.div
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: true }}
+  className="max-w-2xl mx-auto"
+>
 
 {!started && (
 
@@ -338,7 +346,7 @@ Start Game ✨
 key={index}
 initial={{opacity:0,y:30}}
 animate={{opacity:1,y:0}}
-className="max-w-xl mx-auto"
+className="glass rounded-2xl p-6 shadow-card"
 >
 
 <p className="text-sm text-muted-foreground mb-2">
@@ -392,23 +400,23 @@ ratings[index] >= star
 <motion.div
 initial={{ scale: 0.9, opacity: 0 }}
 animate={{ scale: 1, opacity: 1 }}
-transition={{ duration: 0.4 }}
-className="max-w-lg mx-auto text-center"
+transition={{ type: "spring", stiffness: 100 }}
+className="mt-8 glass rounded-2xl p-8 text-center shadow-glow animate-glow-pulse"
 >
 
-<h3 className="text-4xl font-bold mb-4 text-gray-800">
+<h3 className="text-3xl md:text-4xl font-bold mb-5 text-gray-800 tracking-tight">
 {result.title}
 </h3>
 
-<p className="text-muted-foreground mb-4">
+<p className="text-lg leading-relaxed text-gray-700 whitespace-pre-line font-medium max-w-md mx-auto">
 {result.message}
 </p>
 
-<p className="font-semibold mb-6">
-Score: {score} / 50
+<p className="text-sm text-gray-500 mt-4">
+Score • {score} / 50
 </p>
 
-<p className="text-sm text-muted-foreground mt-6">
+<p className="text-sm text-gray-500 mt-8 leading-relaxed max-w-md mx-auto">
 
 Thanks for taking a moment to reflect on {senderName}.
 
@@ -419,10 +427,10 @@ Today,
 you reminded them that they matter too. 🌸
 
 </p>
-
+<div className="h-px bg-border my-6"></div>
 <button
 onClick={share}
-className="px-6 py-3 rounded-xl bg-green-500 text-white font-semibold"
+className="mt-8 px-6 py-3 rounded-xl bg-green-500 text-white font-semibold shadow-lg hover:scale-105 transition"
 >
 Share on WhatsApp ➤
 </button>
@@ -430,7 +438,7 @@ Share on WhatsApp ➤
 </motion.div>
 
 )}
-</div>
+</motion.div>
 </section>
 
 )
