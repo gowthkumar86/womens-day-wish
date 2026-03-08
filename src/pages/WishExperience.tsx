@@ -14,6 +14,7 @@ import MiniGames from '@/components/wish/MiniGames';
 import HiddenAppreciation from '@/components/wish/HiddenAppreciation';
 import StoryGenerator from '@/components/wish/StoryGenerator';
 import PersonalMessage from '@/components/wish/PersonalMessage';
+import ReflectOnSender from "@/components/wish/ReflectOnSender"
 import MusicPlayer from '@/components/wish/MusicPlayer';
 import confetti from 'canvas-confetti';
 
@@ -36,6 +37,7 @@ const WishExperience = () => {
 
       try {
         const data = await getWishById(id)
+        console.log("Loaded wish data:", data)
         setWish(data)
       } catch (err) {
         console.error("Error loading wish:", err)
@@ -133,6 +135,13 @@ const WishExperience = () => {
           <PersonalMessage
             message={wish.message}
             name={wish.nickname || wish.name}
+          />
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.1}>
+          <ReflectOnSender 
+            senderName={wish.senderName}
+            relationship={wish.relationship}
           />
         </ScrollReveal>
 

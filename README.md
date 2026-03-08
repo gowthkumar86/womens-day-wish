@@ -1,16 +1,28 @@
 # 🌸 Women's Day Wish Experience
 
-A beautifully animated web experience that celebrates Women's Day with personalized messages, interactive mini-games, and storytelling.
+A beautifully animated interactive celebration page created to make Women's Day special.
 
-Each recipient receives a unique link that opens a cinematic celebration page created specifically for them.
+Each recipient receives a unique personalized link that opens a cinematic storytelling experience with games, messages, animations, and appreciation moments designed specifically for them.
 
+Instead of sending a simple message, this project creates a memorable digital celebration.
 
+# 💡 Why I Built This
+
+Most Women's Day messages online are simple text wishes.
+
+I wanted to build something more meaningful —
+an interactive experience where people can celebrate someone
+through storytelling, appreciation, and playful interaction.
+
+This project focuses on combining emotional storytelling
+with modern web animation to create a memorable digital celebration.
 
 # ✨ Features
 
 - 🎬 Cinematic landing sequence
 - 📖 Storytelling journey
 - ⭐ Self-reflection rating game
+- ⭐ Reflect on the sender with relationship-based questions
 - 🎡 Personality wheel
 - 💌 Hidden appreciation scratch cards
 - 📸 Personalized message section
@@ -59,6 +71,7 @@ src
 │   │   ├── HiddenAppreciation
 │   │   ├── StoryGenerator
 │   │   ├── PersonalMessage
+|   |   ├── ReflectOnSender
 │   │   └── LandingSequence
 │
 ├── pages
@@ -83,7 +96,7 @@ src
 
 ```
 
-git clone [https://github.com/your-username/womens-day-wishes.git](https://github.com/your-username/womens-day-wishes.git)
+git clone https://github.com/your-username/womens-day-wishes.git
 cd womens-day-wishes
 
 ```
@@ -136,7 +149,7 @@ Open in browser:
 
 ```
 
-[http://localhost:8080](http://localhost:8080)
+[http://localhost:8080]
 
 ```
 
@@ -159,6 +172,7 @@ wishes
 | id | text |
 | name | text |
 | nickname | text |
+| sender_name | text |
 | photo | text |
 | message | text |
 | compliment_style | text |

@@ -23,6 +23,7 @@ const AdminDashboard = () => {
   // Form state
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
+  const [senderName,setSenderName] = useState("")
   const [photo, setPhoto] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [complimentStyle, setComplimentStyle] = useState<WishData['complimentStyle']>('warm');
@@ -87,6 +88,7 @@ const AdminDashboard = () => {
         id,
         name,
         nickname,
+        senderName,
         photo,
         message,
         complimentStyle,
@@ -107,7 +109,7 @@ const AdminDashboard = () => {
   }
 
   const handleEdit = (w: WishData) => {
-    setName(w.name); setNickname(w.nickname); setPhoto(w.photo);
+    setName(w.name); setNickname(w.nickname);setSenderName(w.senderName); setPhoto(w.photo);
     setMessage(w.message); setComplimentStyle(w.complimentStyle);
     setRelationship(w.relationship);setAppreciationImages(w.appreciationImages || []); setEditingId(w.id); setShowForm(true);
   };
@@ -180,6 +182,17 @@ const AdminDashboard = () => {
                   <div>
                     <label className="block text-sm font-semibold mb-1 font-body">Nickname</label>
                     <input value={nickname} onChange={e => setNickname(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1 font-body">
+                    Sender Name
+                    </label>
+                    <input
+                    value={senderName}
+                    onChange={(e)=>setSenderName(e.target.value)}
+                    placeholder="Your name"
+                    className="w-full px-4 py-2.5 rounded-xl bg-background border border-border"
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-1 font-body">Photo</label>

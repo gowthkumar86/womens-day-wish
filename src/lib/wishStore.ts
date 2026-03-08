@@ -4,6 +4,7 @@ export interface WishData {
   id: string;
   name: string;
   nickname: string;
+  senderName: string;
   photo: string | null;
   message: string;
   complimentStyle: "warm" | "fun" | "elegant" | "powerful";
@@ -64,6 +65,7 @@ export const getWishById = async (id: string) => {
     id: data.id,
     name: data.name,
     nickname: data.nickname,
+    senderName: data.sender_name,
     photo: data.photo,
     message: data.message,
     complimentStyle: data.compliment_style,
@@ -82,6 +84,7 @@ export const saveWish = async (wish: WishData) => {
         id: wish.id,
         name: wish.name,
         nickname: wish.nickname,
+        sender_name: wish.senderName,
         photo: wish.photo,
         message: wish.message,
         compliment_style: wish.complimentStyle,
